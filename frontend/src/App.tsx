@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Canvas } from '@react-three/fiber'
 import { Character } from './components/Hero/Character'
+import { HeadTracker } from './components/Hero/HeadTracker'
 
 export default function App() {
   return (
@@ -11,6 +12,7 @@ export default function App() {
         <Suspense fallback={null}>
           <Character />
         </Suspense>
+        <HeadTracker />
       </Canvas>
     </div>
   )
