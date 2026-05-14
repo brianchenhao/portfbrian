@@ -1,19 +1,44 @@
-import { useRef } from 'react'
+import { useEffect, useRef } from 'react'
 import type { RefObject } from 'react'
 import { useFrame, useThree } from '@react-three/fiber'
-import { Euler, MathUtils, Object3D, Quaternion, Vector3 } from 'three'
+import { Euler, MathUtils, Object3D, Quaternion, Vector2, Vector3 } from 'three'
 import type { Bone } from 'three'
 
 const YAW_LIMIT = MathUtils.degToRad(45)
 const PITCH_LIMIT = MathUtils.degToRad(20)
 const SLERP_FACTOR = 0.12
 
+// How far in front of the head the look-target sits, in world units.
+const TARGET_FORWARD = 2
+// How far the look-target slides laterally / vertically per unit of NDC.
+// 1.5 + TARGET_FORWARD=2 gives an angular reach of atan(1.5/2)=36.9°, well
+// inside the YAW_LIMIT but enough to exercise the head's natural range.
+const TARGET_SCALE = 1.5
+
 type Props = {
   headBoneRef: RefObject<Bone | null>
 }
 
 export function HeadTracker({ headBoneRef }: Props) {
-  const { camera, mouse } = useThree()
+  // gl.domElement gives us the canvas DOM element so we can map clientX/Y to
+  // NDC against the actual rendered viewport. A window-level pointermove
+  // (instead of useThree().mouse) keeps tracking when the cursor leaves the
+  // canvas area and avoids relying on R3F's internal pointer state being
+  // ready before the first move event.
+  const { gl } = useThree()
+  const ndc = useRef(new Vector2(0, 0))
+
+  useEffect(() => {
+    const canvas = gl.domElement
+    const update = (e: PointerEvent) => {
+      const rect = canvas.getBoundingClientRect()
+      if (rect.width === 0 || rect.height === 0) return
+      ndc.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      ndc.current.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+    }
+    window.addEventListener('pointermove', update, { passive: true })
+    return () => window.removeEventListener('pointermove', update)
+  }, [gl])
 
   // Scratch buffers — reuse every frame so the GC isn't churned on every tick.
   const restLocal = useRef<Quaternion | null>(null)
@@ -38,7 +63,16 @@ export function HeadTracker({ headBoneRef }: Props) {
       restLocal.current = bone.quaternion.clone()
     }
 
-    worldTarget.current.set(mouse.x, mouse.y, 0.5).unproject(camera)
+    // Build the look-target as a point sitting TARGET_FORWARD units in front
+    // of the head (in world +Z, which is the character's facing direction
+    // given the camera's [0, 1.5, 3] → origin setup), with the cursor's NDC
+    // offsetting it laterally and vertically. Unprojecting NDC at z=0.5 —
+    // what the plan originally specified — collapses the angular reach to a
+    // couple of degrees with this camera, so the head barely moved.
+    bone.getWorldPosition(worldTarget.current)
+    worldTarget.current.x += ndc.current.x * TARGET_SCALE
+    worldTarget.current.y += ndc.current.y * TARGET_SCALE
+    worldTarget.current.z += TARGET_FORWARD
 
     // lookAt on a dummy at the bone's world position gives us the world-space
     // rotation that would point the head at the cursor, without mutating the
