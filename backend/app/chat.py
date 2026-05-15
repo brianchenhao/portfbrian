@@ -2,7 +2,7 @@ import logging
 from typing import Literal
 
 from fastapi import APIRouter, HTTPException, Request
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.gemini import generate_reply
 from app.limiter import limiter
@@ -10,18 +10,25 @@ from app.limiter import limiter
 logger = logging.getLogger(__name__)
 router = APIRouter()
 
+# Caps live next to the schema so they're visible in OpenAPI and easy to bump
+# without hunting through middleware. 500 chars is long enough for a recruiter
+# paragraph, short enough to keep model spend predictable. Six prior turns is
+# enough for context without letting a single client balloon the prompt.
+MAX_MESSAGE_LENGTH = 500
+MAX_HISTORY_TURNS = 6
+
 
 # History turns mirror Gemini's "user" / "model" role vocabulary so we can pass
 # them through to the model without remapping later. The frontend speaks the
 # same vocabulary on the wire.
 class ChatTurn(BaseModel):
     role: Literal["user", "model"]
-    content: str
+    content: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
 
 
 class ChatRequest(BaseModel):
-    message: str
-    history: list[ChatTurn] = []
+    message: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
+    history: list[ChatTurn] = Field(default_factory=list, max_length=MAX_HISTORY_TURNS)
 
 
 class ChatResponse(BaseModel):
