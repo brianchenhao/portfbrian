@@ -16,19 +16,19 @@ export default function App() {
     // No <Canvas> on coarse-pointer devices — saves WebGL context, GPU
     // memory, and battery for visitors who can't drive head tracking anyway.
     return (
-      <div className="scene-host">
+      <div className="flex h-screen w-screen items-center justify-center">
         <img
           src={FALLBACK_IMAGE}
           alt=""
           aria-hidden="true"
-          className="scene-fallback"
+          className="max-h-full max-w-full object-contain"
         />
       </div>
     )
   }
 
   return (
-    <div className="scene-host">
+    <div className="h-screen w-screen">
       <Canvas camera={{ position: [0, 1.5, 3], fov: 28 }}>
         <ambientLight intensity={0.6} />
         <directionalLight position={[5, 5, 5]} intensity={0.9} />
