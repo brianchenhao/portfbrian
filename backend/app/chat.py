@@ -11,10 +11,14 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 # Caps live next to the schema so they're visible in OpenAPI and easy to bump
-# without hunting through middleware. 500 chars is long enough for a recruiter
-# paragraph, short enough to keep model spend predictable. Six prior turns is
-# enough for context without letting a single client balloon the prompt.
+# without hunting through middleware. The message cap (500 chars) bounds what
+# a recruiter can type. The turn cap (2000 chars) is deliberately looser so a
+# paragraph-length Gemini reply survives being sent back as history — the bio
+# prompt asks for 1–3 short paragraphs, which often runs >500 chars. Six prior
+# turns is enough for context without letting a single client balloon the
+# prompt.
 MAX_MESSAGE_LENGTH = 500
+MAX_TURN_LENGTH = 2000
 MAX_HISTORY_TURNS = 6
 
 
@@ -23,7 +27,7 @@ MAX_HISTORY_TURNS = 6
 # same vocabulary on the wire.
 class ChatTurn(BaseModel):
     role: Literal["user", "model"]
-    content: str = Field(min_length=1, max_length=MAX_MESSAGE_LENGTH)
+    content: str = Field(min_length=1, max_length=MAX_TURN_LENGTH)
 
 
 class ChatRequest(BaseModel):
