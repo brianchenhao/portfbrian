@@ -2,6 +2,7 @@ import { Suspense, useRef } from 'react'
 import { Canvas } from '@react-three/fiber'
 import type { Bone } from 'three'
 import { Character } from './Character'
+import { ChatBox } from './ChatBox'
 import { HeadTracker } from './HeadTracker'
 import { AimCameraAtHead } from './AimCameraAtHead'
 import { useIsMobile } from '../../hooks/useIsMobile'
@@ -47,6 +48,7 @@ export function Hero() {
               See projects
             </a>
           </div>
+          <ChatBox />
         </div>
 
         <div className="relative h-[55vh] w-full md:h-screen md:w-1/2">
