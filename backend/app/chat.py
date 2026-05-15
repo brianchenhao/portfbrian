@@ -1,10 +1,11 @@
 import logging
 from typing import Literal
 
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Request
 from pydantic import BaseModel
 
 from app.gemini import generate_reply
+from app.limiter import limiter
 
 logger = logging.getLogger(__name__)
 router = APIRouter()
@@ -28,7 +29,11 @@ class ChatResponse(BaseModel):
 
 
 @router.post("/api/chat", response_model=ChatResponse)
-def chat(body: ChatRequest) -> ChatResponse:
+@limiter.limit("10/hour")
+def chat(request: Request, body: ChatRequest) -> ChatResponse:
+    # The unused `request` arg is required by slowapi to read the rate-limit
+    # key off the incoming request. Removing it silently disables limiting.
+    del request
     history_dicts = [turn.model_dump() for turn in body.history]
     try:
         reply = generate_reply(body.message, history_dicts)

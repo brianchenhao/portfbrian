@@ -3,8 +3,12 @@ import os
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from slowapi import _rate_limit_exceeded_handler
+from slowapi.errors import RateLimitExceeded
+from slowapi.middleware import SlowAPIMiddleware
 
 from app.chat import router as chat_router
+from app.limiter import limiter
 
 # Load .env on import so `uvicorn app.main:app` picks up env vars during local
 # dev. In docker the env_file directive supplies these instead — load_dotenv
@@ -21,6 +25,12 @@ _allowed_origins = [
 ]
 
 app = FastAPI(title="brianchenhao.com chat proxy")
+
+# Order matters here. slowapi reads request.state.view_rate_limit, which is
+# populated by SlowAPIMiddleware before the route handler runs.
+app.state.limiter = limiter
+app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+app.add_middleware(SlowAPIMiddleware)
 
 app.add_middleware(
     CORSMiddleware,
