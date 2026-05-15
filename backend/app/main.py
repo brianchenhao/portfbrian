@@ -4,6 +4,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
+from app.chat import router as chat_router
+
 # Load .env on import so `uvicorn app.main:app` picks up env vars during local
 # dev. In docker the env_file directive supplies these instead — load_dotenv
 # is a harmless no-op when .env is absent.
@@ -32,3 +34,6 @@ app.add_middleware(
 @app.get("/api/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+app.include_router(chat_router)
