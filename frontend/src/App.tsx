@@ -34,7 +34,7 @@ export default function App() {
                 src={FALLBACK_IMAGE}
                 alt=""
                 aria-hidden="true"
-                className="max-h-full max-w-full object-contain"
+                className="scene-fallback max-h-full max-w-full object-contain"
               />
             </div>
           ) : (
