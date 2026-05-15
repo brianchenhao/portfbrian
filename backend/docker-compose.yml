@@ -7,7 +7,13 @@ services:
   api:
     build: ./
     restart: unless-stopped
-    env_file: .env
+    # Enumerate vars explicitly instead of `env_file: .env` so TUNNEL_TOKEN
+    # never lands in the api container's env. Compose auto-loads `.env` from
+    # this directory for ${VAR} substitution, so the values still come from
+    # the same file.
+    environment:
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - ALLOWED_ORIGIN=${ALLOWED_ORIGIN}
     expose:
       - "8000"
     # NO ports: section — only cloudflared (on the same compose network) can
@@ -19,9 +25,8 @@ services:
     restart: unless-stopped
     command: tunnel --no-autoupdate run
     environment:
-      # docker compose auto-loads `.env` from this directory, so TUNNEL_TOKEN
-      # resolves from there. Keep it out of the api service env to limit blast
-      # radius — only cloudflared needs it.
+      # Only cloudflared needs the tunnel token — see the api service above
+      # for why it isn't shared.
       - TUNNEL_TOKEN=${TUNNEL_TOKEN}
     depends_on:
       - api
