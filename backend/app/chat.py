@@ -1,8 +1,12 @@
+import logging
 from typing import Literal
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
+from app.gemini import generate_reply
+
+logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
@@ -25,7 +29,12 @@ class ChatResponse(BaseModel):
 
 @router.post("/api/chat", response_model=ChatResponse)
 def chat(body: ChatRequest) -> ChatResponse:
-    # Stub reply for step 3 — the Gemini wiring lands in step 4. Echoing back
-    # lets the frontend wire up against a real response shape before the model
-    # call exists.
-    return ChatResponse(reply=f"(stub) you said: {body.message}")
+    history_dicts = [turn.model_dump() for turn in body.history]
+    try:
+        reply = generate_reply(body.message, history_dicts)
+    except Exception:
+        # Don't leak provider error messages to the client — they sometimes
+        # include the model name, request id, or other internals.
+        logger.exception("gemini call failed")
+        raise HTTPException(status_code=502, detail="upstream model error")
+    return ChatResponse(reply=reply)
