@@ -1,0 +1,26 @@
+# Secrets — do NOT bake into the image. The container receives env vars at
+# runtime via `env_file: .env` in docker-compose.yml.
+.env
+.env.*
+!.env.example
+
+# Local Python state
+.venv/
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# VCS + editor scratch
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Build / packaging artefacts
+*.egg-info/
+dist/
+build/

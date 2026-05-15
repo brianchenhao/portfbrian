@@ -1,0 +1,27 @@
+# Two-service deploy: the FastAPI app and the Cloudflare Tunnel daemon that
+# fronts it. The api service intentionally does NOT publish a host port — the
+# only path into it is the tunnel. See CLAUDE.md "The tunnel is the security
+# boundary". Debug from inside the network with `docker compose exec api …`.
+
+services:
+  api:
+    build: ./
+    restart: unless-stopped
+    env_file: .env
+    expose:
+      - "8000"
+    # NO ports: section — only cloudflared (on the same compose network) can
+    # reach this. Adding `ports: 8000:8000` would expose the API directly to
+    # the Droplet's public IP and defeat the tunnel.
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      # docker compose auto-loads `.env` from this directory, so TUNNEL_TOKEN
+      # resolves from there. Keep it out of the api service env to limit blast
+      # radius — only cloudflared needs it.
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    depends_on:
+      - api
