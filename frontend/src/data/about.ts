@@ -14,15 +14,15 @@ export type About = {
 
 export const about: About = {
   tagline:
-    'Full-stack engineer building small, opinionated tools — security middleware, AI proxies, and the occasional 3D web toy.',
+    'Final-year CS student shipping production tools — a multi-tenant AI POS and an open-source ASGI security middleware on PyPI.',
   paragraphs: [
-    "I'm Brian. I write production code for a living and ship side projects on weekends. Most of what I build sits between a browser and an LLM, or between a browser and something that wishes it weren't on the open internet.",
-    'My favourite work is the kind where the right answer is to delete more code than I add. I like systems that explain themselves in a `README` and fail loudly when they break. I do not like microservices for the sake of it.',
-    'Outside of code: long-distance running, mechanical keyboards, and a stubborn habit of writing my own blog engine instead of using one off the shelf.',
+    "I'm Brian. Final-year Computer Science student at INTI International University, working across mobile (Flutter), backend (FastAPI / SQLAlchemy), and applied AI (YOLO, LLM function calling).",
+    "My flagship work is two things. GEYAM — an AI-powered multi-tenant restaurant POS with real-time food tray recognition via fine-tuned YOLO, plus an LLM assistant that answers natural-language questions about live sales through function calling. And Antsilk — a drop-in ASGI security middleware published to PyPI that protects FastAPI apps with rate limiting, WAF pattern scanning, JWT validation, and structured attack logging in two lines of install.",
+    'I like building things that fail loudly, ship in a single docker compose, and explain themselves in a README. CAPM-certified. Currently looking for internships in software engineering, AI/ML, or backend infrastructure.',
   ],
   facts: [
-    { label: 'focus', value: 'web security, AI plumbing, fast static sites' },
-    { label: 'stack', value: 'TypeScript / Python / a little Rust' },
-    { label: 'shipping since', value: '2019' },
+    { label: 'focus', value: 'AI plumbing, security middleware, multi-tenant systems' },
+    { label: 'stack', value: 'Python / Dart / TypeScript' },
+    { label: 'looking for', value: 'internships — SWE, AI/ML, backend infra' },
   ],
 }

@@ -20,30 +20,21 @@ export type Project = {
 
 export const projects: Project[] = [
   {
-    name: 'Antsilk',
-    tagline: 'A self-hosted WAF middleware for small web apps.',
+    name: 'GEYAM',
+    tagline: 'AI-powered multi-tenant restaurant POS with live vision + LLM assistant.',
     description:
-      'Antsilk sits in front of FastAPI / Express / Cloudflare Workers and applies a tight ruleset — rate limits, bot heuristics, request-shape checks — without forcing you onto a managed WAF. Designed for indie projects that have started attracting scanners but cannot justify enterprise tooling. Dogfoodable: the chat proxy on this site routes through Antsilk.',
-    stack: ['Go', 'Cloudflare Workers', 'Redis', 'TypeScript SDK'],
-    links: { live: 'https://antsilk.com' },
-    tag: 'flagship',
-  },
-  {
-    name: 'Geyam',
-    tagline: 'Reading-focused RSS reader with a quiet UI.',
-    description:
-      'A read-it-later / RSS hybrid that strips ads, normalises typography, and ranks unread items by how long it has been since you opened a source. No social features, no engagement loops — the only metric is whether you actually finished what you queued.',
-    stack: ['TypeScript', 'React', 'PostgreSQL', 'Cloudflare Workers'],
+      'Cross-platform POS with multi-tenant isolation, real-time food tray recognition via a fine-tuned YOLO model, and an LLM assistant ("GEYAM, tell me sales today") that uses function calling to query live transactions. Integrated Billplz payments and deployed end-to-end with custom DNS via Cloudflare.',
+    stack: ['Flutter', 'FastAPI', 'YOLO (Ultralytics)', 'Qwen 2.5 LLM', 'PostgreSQL', 'Billplz', 'Cloudflare'],
     links: { live: 'https://geyam.com' },
     tag: 'flagship',
   },
   {
-    name: 'Chenki',
-    tagline: 'Spaced-repetition flashcards for shell commands and APIs.',
+    name: 'Antsilk',
+    tagline: 'Open-source ASGI security middleware for FastAPI — two lines to install.',
     description:
-      'Daily drills for the things you keep googling: git incantations, `awk` one-liners, AWS CLI flags. Cards generate from your own shell history so what you study mirrors what you actually use.',
-    stack: ['Python', 'FastAPI', 'SQLite', 'Alpine.js'],
-    links: { live: 'https://chenki.com' },
+      'Drop-in Python library that protects ASGI apps with bundled rate limiting, WAF pattern scanning, JWT validation, and structured attack logging. Two-line install. Published to PyPI; deployed on Geyam in production for live attack telemetry.',
+    stack: ['Python', 'ASGI', 'FastAPI', 'PyPI'],
+    links: { live: 'https://antsilk.com' },
     tag: 'flagship',
   },
   {
@@ -51,24 +42,24 @@ export const projects: Project[] = [
     tagline: 'This site. 3D head-tracking character + Gemini-backed chat.',
     description:
       'Single-page React + Vite portfolio with a rigged GLB whose head bone follows the cursor, plus a chat box backed by a FastAPI proxy reachable only through a Cloudflare Tunnel. No public ports on the backend Droplet. Built deliberately small — under 2 MB of GLB, one container for the API, one for the tunnel.',
-    stack: ['React 19', 'Vite', 'react-three-fiber', 'FastAPI', 'Gemini 2.5 Flash'],
-    links: { repo: 'https://github.com/brianchenhao/brianchenhao.com' },
+    stack: ['React 19', 'Vite', 'react-three-fiber', 'FastAPI', 'Gemini 2.5 Flash', 'Cloudflare Tunnel'],
+    links: { repo: 'https://github.com/brianchenhao' },
     tag: 'ongoing',
   },
   {
-    name: 'HackXYZ 2025 — "tabula"',
-    tagline: 'Hackathon: live transcription + topic-extraction for lectures.',
+    name: 'AI Medical chat — Great Malaysia AI Hackathon 2025',
+    tagline: 'Hackathon: AI medical chat system deployed on AWS Amplify. Top 15 finalist.',
     description:
-      "Weekend build. Captures audio from a laptop mic, streams it through Whisper, and updates an outline in real time as the speaker introduces new concepts. Won 'best use of a small model' — the whole pipeline runs on a M2 Air.",
-    stack: ['Python', 'Whisper', 'React', 'WebSockets'],
+      'Co-built and deployed an AI medical chat system on AWS Amplify in a 48-hour team hackathon. Reached top 15 out of the open field.',
+    stack: ['AWS Amplify', 'LLM', 'React'],
     tag: 'hackathon',
   },
   {
-    name: 'HackXYZ 2024 — "loomweave"',
-    tagline: 'Hackathon: collaborative knitting-pattern editor.',
+    name: 'GboBuy — dEVMatch 2024',
+    tagline: 'Hackathon: decentralised e-commerce on Aptos. 2nd place.',
     description:
-      "Real-time pattern editor with CRDT sync, exporting to standard knitting chart formats. Built because a teammate's mum is a knitter and the existing tools all assume a desktop running Windows XP.",
-    stack: ['TypeScript', 'Yjs', 'Svelte', 'Canvas API'],
+      'Co-built GboBuy, a decentralised e-commerce platform on the Aptos blockchain with smart-contract-backed listings and escrow. Placed 2nd in a 48-hour team hackathon.',
+    stack: ['Aptos', 'Move', 'Smart Contracts', 'React'],
     tag: 'hackathon',
   },
 ]

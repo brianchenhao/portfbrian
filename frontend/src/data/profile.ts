@@ -4,8 +4,8 @@
 // presence and are fine to publish.
 
 export const profile = {
-  name: 'Brian Chen',
-  role: 'Software Engineer',
+  name: 'Brian Chen Jun Hao',
+  role: 'Software Engineer · Final-year CS',
   // LinkedIn is the *only* contact CTA on the site. Recruiters DM here and
   // Brian shares the resume 1:1 after intro — that's the policy.
   linkedinUrl: 'https://www.linkedin.com/in/brianchenhao',

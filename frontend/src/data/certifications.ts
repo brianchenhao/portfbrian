@@ -12,18 +12,28 @@ export type Certification = {
 
 export const certifications: Certification[] = [
   {
-    name: 'AWS Certified Solutions Architect — Associate',
-    issuer: 'Amazon Web Services',
-    year: 2024,
+    name: 'CAPM — Certified Associate in Project Management',
+    issuer: 'PMI',
+    year: 2026,
   },
   {
-    name: 'CompTIA Security+',
-    issuer: 'CompTIA',
-    year: 2023,
+    name: 'AWS Academy Graduate — Generative AI Foundations',
+    issuer: 'AWS',
+    year: 2025,
   },
   {
-    name: 'Google Cloud Associate Cloud Engineer',
-    issuer: 'Google Cloud',
-    year: 2022,
+    name: 'AWS Academy Graduate — Machine Learning for NLP',
+    issuer: 'AWS',
+    year: 2025,
+  },
+  {
+    name: 'Artificial Intelligence Fundamentals',
+    issuer: 'IBM',
+    year: 2025,
+  },
+  {
+    name: 'CCNA: Introduction to Networks',
+    issuer: 'Cisco',
+    year: 2025,
   },
 ]

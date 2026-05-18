@@ -10,30 +10,30 @@ export type SkillGroup = {
 export const skillGroups: SkillGroup[] = [
   {
     title: 'languages',
-    items: ['TypeScript', 'JavaScript', 'Python', 'Go', 'Rust', 'SQL', 'Bash'],
+    items: ['Python', 'Dart', 'JavaScript', 'TypeScript', 'SQL', 'Bash'],
   },
   {
     title: 'frontend',
-    items: ['React', 'Vite', 'Tailwind CSS', 'three.js', 'react-three-fiber'],
+    items: ['Flutter', 'React', 'Vite', 'HTML', 'CSS', 'Tailwind'],
   },
   {
     title: 'backend',
-    items: ['FastAPI', 'Node.js', 'Express', 'PostgreSQL', 'Redis', 'SQLite'],
+    items: ['FastAPI', 'SQLAlchemy', 'Alembic', 'PostgreSQL', 'Redis', 'Firebase'],
   },
   {
     title: 'cloud / infra',
-    items: ['Docker', 'Cloudflare Tunnel', 'DigitalOcean', 'Hostinger', 'GitHub Actions'],
+    items: ['Docker', 'AWS Amplify', 'Cloudflare', 'Cloudflare Tunnel', 'DigitalOcean', 'Hostinger'],
   },
   {
     title: 'ai / llm',
-    items: ['Gemini API', 'OpenAI API', 'Anthropic API', 'prompt design', 'rate-limited proxies'],
+    items: ['YOLO (Ultralytics)', 'Qwen 2.5 LLM', 'function calling', 'Gemini API', 'Pandas', 'NumPy'],
   },
   {
     title: 'security',
-    items: ['WAF rules', 'rate limiting', 'CORS hardening', 'RFC 9116 disclosure'],
+    items: ['ASGI middleware', 'WAF pattern scanning', 'rate limiting', 'JWT / OAuth 2.0', 'CORS hardening'],
   },
   {
     title: 'tooling',
-    items: ['Git', 'pnpm', 'ESLint', 'Playwright', 'gltf-transform'],
+    items: ['Git', 'REST APIs', 'WebSockets', 'multi-tenant architecture', 'Billplz', 'Apros'],
   },
 ]
