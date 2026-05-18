@@ -20,11 +20,16 @@ type Props = {
 }
 
 export function HeadTracker({ headBoneRef }: Props) {
-  // gl.domElement gives us the canvas DOM element so we can map clientX/Y to
-  // NDC against the actual rendered viewport. A window-level pointermove
-  // (instead of useThree().mouse) keeps tracking when the cursor leaves the
-  // canvas area and avoids relying on R3F's internal pointer state being
-  // ready before the first move event.
+  // NDC is mapped against the canvas's bounding rect, then re-centered on the
+  // head's projected screen position each frame. Cursor on the character's
+  // head maps to offset (0, 0) → head looks straight forward; cursor below
+  // the head → head pitches down; cursor above → pitches up. Using raw
+  // canvas-center NDC was wrong because the head sits above canvas center
+  // due to the AimCameraAtHead framing offset.
+  //
+  // We also clamp the raw NDC to [-1, 1] so a cursor outside the canvas
+  // (over the text/chat column or off-screen) caps at the edge instead of
+  // running past the YAW_LIMIT clamp downstream.
   const { gl } = useThree()
   const ndc = useRef(new Vector2(0, 0))
 
@@ -33,8 +38,10 @@ export function HeadTracker({ headBoneRef }: Props) {
     const update = (e: PointerEvent) => {
       const rect = canvas.getBoundingClientRect()
       if (rect.width === 0 || rect.height === 0) return
-      ndc.current.x = ((e.clientX - rect.left) / rect.width) * 2 - 1
-      ndc.current.y = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+      const rawX = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      const rawY = -(((e.clientY - rect.top) / rect.height) * 2 - 1)
+      ndc.current.x = MathUtils.clamp(rawX, -1, 1)
+      ndc.current.y = MathUtils.clamp(rawY, -1, 1)
     }
     window.addEventListener('pointermove', update, { passive: true })
     return () => window.removeEventListener('pointermove', update)
@@ -44,12 +51,14 @@ export function HeadTracker({ headBoneRef }: Props) {
   const restLocal = useRef<Quaternion | null>(null)
   const dummy = useRef(new Object3D())
   const worldTarget = useRef(new Vector3())
+  const headScreen = useRef(new Vector3())
   const parentWorldInv = useRef(new Quaternion())
   const desiredLocal = useRef(new Quaternion())
   const restInv = useRef(new Quaternion())
   const delta = useRef(new Quaternion())
   const finalLocal = useRef(new Quaternion())
   const euler = useRef(new Euler(0, 0, 0, 'YXZ'))
+  const { camera } = useThree()
 
   useFrame(() => {
     const bone = headBoneRef.current
@@ -63,15 +72,24 @@ export function HeadTracker({ headBoneRef }: Props) {
       restLocal.current = bone.quaternion.clone()
     }
 
+    // Project the head bone's world position into NDC. Subtract that from
+    // the cursor NDC so the offset is measured relative to the head's
+    // on-screen position, not the canvas center. This makes "cursor on the
+    // character's head" = "look forward" regardless of where the head sits
+    // in the framing.
+    bone.getWorldPosition(headScreen.current)
+    headScreen.current.project(camera)
+    headScreen.current.y += 1
+    const offsetX = ndc.current.x - headScreen.current.x
+    const offsetY = ndc.current.y - headScreen.current.y
+
     // Build the look-target as a point sitting TARGET_FORWARD units in front
     // of the head (in world +Z, which is the character's facing direction
-    // given the camera's [0, 1.5, 3] → origin setup), with the cursor's NDC
-    // offsetting it laterally and vertically. Unprojecting NDC at z=0.5 —
-    // what the plan originally specified — collapses the angular reach to a
-    // couple of degrees with this camera, so the head barely moved.
+    // given the camera's [0, 1.5, 3] → origin setup), with the head-relative
+    // NDC offset displacing it laterally and vertically.
     bone.getWorldPosition(worldTarget.current)
-    worldTarget.current.x += ndc.current.x * TARGET_SCALE
-    worldTarget.current.y += ndc.current.y * TARGET_SCALE
+    worldTarget.current.x += offsetX * TARGET_SCALE
+    worldTarget.current.y += offsetY * TARGET_SCALE
     worldTarget.current.z += TARGET_FORWARD
 
     // lookAt on a dummy at the bone's world position gives us the world-space
